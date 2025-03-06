@@ -1,3 +1,11 @@
+/* 
+================================================
+Creating the New table for gold layer:
+This table consists of the new cleaned and joined with surrogate keys table.
+Running this script will Create new tables into the gold layer.
+===================================================
+*/
+
 CREATE OR REPLACE VIEW gold.dim_customer AS
 SELECT ROW_NUMBER() OVER(
     ORDER BY ci.cst_id
