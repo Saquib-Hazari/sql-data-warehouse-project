@@ -1,30 +1,45 @@
--- Checking the second table silver.crm_prd_info table for issues
+-- Checking the erp.sale column
 SELECT *
-FROM bronze.crm_prd_info -- Checking for NULL and duplicates in primary key.
-SELECT prd_id,
-  COUNT(*)
-FROM bronze.crm_prd_info
-GROUP BY prd_id
-HAVING COUNT(*) > 1 -- Creating prd_key for the customer table 
-SELECT prd_id,
-  prd_key,
-  REPLACE(SUBSTRING(prd_key, 1, 5), '-', '_') AS cst_id,
-  SUBSTRING(prd_key, 7, LENGTH(prd_key)) AS prd_key,
-  prd_nm,
-  prd_cost,
-  prd_line,
-  prd_start_dt,
-  prd_end_dt
-FROM bronze.crm_prd_info
-WHERE SUBSTRING(prd_key, 7, LENGTH(prd_key)) IN (
-    SELECT sls_prd_key
-    FROM bronze.crm_sales_details
-  ) -- Checking for the pr_nm column for
-SELECT prd_nm
-FROM bronze.crm_prd_info
-WHERE prd_nm != TRIM(prd_nm) -- Check weather we have negative number or negative cost
-  -- expected result: No result
-SElECT prd_cost
-FROM bronze.crm_prd_info
-WHERE prd_cost::INTEGER < 0
-  OR prd_cost::INTEGER IS NULL
+FROM silver.erp_px_cat_g1v2
+WHERE id NOT IN(
+    SELECT cst_id
+    FROM silver.crm_prd_info
+  ) -- Checking the cat column
+SELECT DISTINCT(cat)
+FROM silver.erp_px_cat_g1v2 -- Checking for the subcat
+SELECT DISTINCT(maintenance)
+FROM silver.erp_px_cat_g1v2
+SELECT table_name,
+  column_name,
+  data_type
+FROM information_schema.columns
+WHERE table_schema = 'gold'
+ORDER BY table_name,
+  ordinal_position;
+SELECT column_name,
+  data_type
+FROM information_schema.columns
+WHERE table_name = 'gold.dim_products'
+ORDER BY ordinal_position;
+-- Testing for the joins
+SELECT DISTINCT ci.cst_gender,
+  ca.gen,
+  CASE
+    WHEN ci.cst_gender != 'n/a' THEN ci.cst_gender -- created from the master table.
+    ELSE COALESCE(ca.gen, 'n/a')
+  END AS new_gen
+FROM silver.crm_cust_info ci
+  LEFT JOIN silver.erp_cust_az12 ca ON ca.cid = ci.cst_key
+ORDER BY 1,
+  2 --- Testing the gold.dim_customer table
+SELECT *
+FROM gold.dim_customer
+SELECT *
+FROM gold.dim_products
+SELECT *
+FROM gold.fact_sales -- Checking for the NULLs 
+SELECT *
+FROM gold.fact_sales fs
+  LEFT JOIN gold.dim_customer dc ON dc.customer_key = fs.customer_key
+  LEFT JOIN gold.dim_products dp ON dp.product_key = fs.product_key
+WHERE dp.product_key IS NULL
