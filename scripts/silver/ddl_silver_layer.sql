@@ -13,11 +13,9 @@
 -- 🚀 Ensure the silver schema exists
 CREATE SCHEMA IF NOT EXISTS silver;
 -- 🚀 Drop existing tables if they exist
-DROP TABLE IF EXISTS silver.crm_cust_info;
-DROP TABLE IF EXISTS silver.erp_cust_az12;
-DROP TABLE IF EXISTS silver.erp_loc_a101;
-DROP TABLE IF EXISTS silver.erp_px_cat_g1v2;
+
 -- 🚀 Create Silver Table for Customer Information
+DROP TABLE IF EXISTS silver.crm_cust_info;
 CREATE TABLE silver.crm_cust_info (
   cst_id INTEGER,
   cst_key TEXT,
@@ -34,9 +32,8 @@ CREATE TABLE silver.crm_cust_info (
 DROP TABLE IF EXISTS silver.crm_prd_info;
 CREATE TABLE silver.crm_prd_info (
   prd_id INTEGER,
+  cat_id VARCHAR(50),
   prd_key VARCHAR(50),
-  cst_id VARCHAR(50),
-  prd_keys VARCHAR(50),
   -- Ensures unique product keys
   prd_nm TEXT,
   prd_cost NUMERIC(10, 2),
@@ -62,6 +59,7 @@ CREATE TABLE silver.crm_sales_details (
   dwh_update_date TIMESTAMP DEFAULT NOW()
 );
 -- 🚀 Create Silver Table for ERP Customer Data
+DROP TABLE IF EXISTS silver.erp_cust_az12;
 CREATE TABLE silver.erp_cust_az12 (
   cid TEXT PRIMARY KEY,
   bdate DATE,
@@ -70,6 +68,8 @@ CREATE TABLE silver.erp_cust_az12 (
   dwh_update_date TIMESTAMP DEFAULT NOW()
 );
 -- 🚀 Create Silver Table for ERP Location Data
+
+DROP TABLE IF EXISTS silver.erp_loc_a101;
 CREATE TABLE silver.erp_loc_a101 (
   cid TEXT PRIMARY KEY,
   cntry TEXT,
@@ -77,6 +77,7 @@ CREATE TABLE silver.erp_loc_a101 (
   dwh_update_date TIMESTAMP DEFAULT NOW()
 );
 -- 🚀 Create Silver Table for ERP Product Category
+DROP TABLE IF EXISTS silver.erp_px_cat_g1v2;
 CREATE TABLE silver.erp_px_cat_g1v2 (
   id TEXT PRIMARY KEY,
   cat TEXT,

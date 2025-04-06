@@ -14,6 +14,9 @@ batch_end_time TIMESTAMP;
 total_duration INTERVAL;
 BEGIN -- 🚀 Log batch start time
 batch_start_time := clock_timestamp();
+RAISE NOTICE '==================================';
+RAISE NOTICE 'LOADING BRONZE LAYER';
+RAISE NOTICE '==================================';
 RAISE NOTICE '🚀 Starting Bronze Layer Load at %',
 batch_start_time;
 -- 🛑 Step 1: Truncate the tables before loading
@@ -32,22 +35,22 @@ END;
 -- 🚀 Step 2: Load data from CSV files into Bronze tables
 BEGIN RAISE NOTICE '📂 Loading data into Bronze Layer...';
 COPY bronze.crm_cust_info
-FROM '/tmp/cust_info.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saquibhazari/DEVELOPERS/sql-data-warehouse-project/datasets/source_crm/cust_info.csv' DELIMITER ',' CSV HEADER;
 RAISE NOTICE '✅ Loaded cust_info.csv.';
 COPY bronze.crm_prd_info
-FROM '/tmp/prd_info.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saquibhazari/DEVELOPERS/sql-data-warehouse-project/datasets/source_crm/prd_info.csv' DELIMITER ',' CSV HEADER;
 RAISE NOTICE '✅ Loaded prd_info.csv.';
 COPY bronze.crm_sales_details
-FROM '/tmp/sales_details.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saquibhazari/DEVELOPERS/sql-data-warehouse-project/datasets/source_crm/sales_details.csv' DELIMITER ',' CSV HEADER;
 RAISE NOTICE '✅ Loaded sales_details.csv.';
 COPY bronze.erp_cust_az12
-FROM '/tmp/CUST_AZ12.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saquibhazari/DEVELOPERS/sql-data-warehouse-project/datasets/source_erp/CUST_AZ12.csv' DELIMITER ',' CSV HEADER;
 RAISE NOTICE '✅ Loaded CUST_AZ12.csv.';
 COPY bronze.erp_loc_a101
-FROM '/tmp/LOC_A101.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saquibhazari/DEVELOPERS/sql-data-warehouse-project/datasets/source_erp/LOC_A101.csv' DELIMITER ',' CSV HEADER;
 RAISE NOTICE '✅ Loaded LOC_A101.csv.';
 COPY bronze.erp_px_cat_g1v2
-FROM '/tmp/PX_CAT_G1V2.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saquibhazari/DEVELOPERS/sql-data-warehouse-project/datasets/source_erp/PX_CAT_G1V2.csv' DELIMITER ',' CSV HEADER;
 RAISE NOTICE '✅ Loaded PX_CAT_G1V2.csv.';
 EXCEPTION
 WHEN OTHERS THEN RAISE WARNING '❌ Error occurred during data load: %',
@@ -65,3 +68,5 @@ EXTRACT(
 );
 END;
 $$;
+
+CALL bronze.import_bronze_layer();
