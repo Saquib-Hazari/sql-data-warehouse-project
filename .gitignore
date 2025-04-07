@@ -4,3 +4,4 @@ scripts/test.sql
 Joins/
 /bin
 /sql-data-warehouse-project
+*.env

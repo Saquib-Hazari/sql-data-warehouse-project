@@ -6,3 +6,7 @@
 # Optional Tools (if needed for auxiliary tasks or automation)
 # python-dotenv==1.0.0  # For managing environment variables (optional)
 # requests==2.28.1      # For API integrations if needed
+
+pandas
+psycopg2-binary
+python-dotenv
